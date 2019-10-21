@@ -21,8 +21,8 @@ public class SparkCSVIngest extends SparkRunner {
             .master("local[*]")
             .getOrCreate();
 
-    /* First schema for raw data:
-       ------------------------*/
+    /* 1. raw data csv = spark.read():
+       ----------------------------*/
     public static void main(String[] args) {
         Dataset<Row> csv = spark
                 .read()
@@ -33,8 +33,8 @@ public class SparkCSVIngest extends SparkRunner {
         csv.show();
         csv.printSchema();
 
-        /* Second schema for Coca Cola rows grouped by size & group id - averaged by price:
-           ------------------------------------------------------------------------------*/
+        /* 2. filtered data agg = csv.filter() then grouped by size & group id - averaged by price:
+           --------------------------------------------------------------------------------------*/
         Dataset<Row> agg = csv.filter((FilterFunction<Row>) row -> row
                 .getAs("product")
                 .equals("Coca Cola"))
@@ -44,7 +44,7 @@ public class SparkCSVIngest extends SparkRunner {
         agg.show();
         agg.printSchema();
 
-        /* A User-defined function to add readableID
+        /* A User-defined function to tack readableID
            ---------------------------------------*/
         spark.udf().register("readableId", new UDF1<Integer, String>() {
             @Override
@@ -53,8 +53,8 @@ public class SparkCSVIngest extends SparkRunner {
             }
         }, StringType);
 
-        /* Third schema to aggregate with readableID and sort by the averagePrice:
-           ---------------------------------------------------------------------*/
+        /* 3. final data ordered = agg.withcolumn() for readableId - and sort by the averagePrice:
+           ------------------------------------------------------------------------------------*/
         Dataset<Row> ordered = agg
                 .withColumn("readableId", functions.callUDF("readableId", functions.col("group id")))
                 .orderBy(functions.col("averagePrice").desc());
