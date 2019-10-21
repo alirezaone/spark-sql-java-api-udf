@@ -53,7 +53,7 @@ public class SparkCSVIngest extends SparkRunner {
             }
         }, StringType);
 
-        /* 3. final data ordered = agg.withcolumn() for readableId - and sort by the averagePrice:
+        /* 3. final data ordered = agg.withcolumn() for readableId - and sorted by the averagePrice:
            ------------------------------------------------------------------------------------*/
         Dataset<Row> ordered = agg
                 .withColumn("readableId", functions.callUDF("readableId", functions.col("group id")))
