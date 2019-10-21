@@ -1,0 +1,85 @@
+
++---------+--------+-----+------------+--------------------+
+|  product|group id|price|        size|         description|
++---------+--------+-----+------------+--------------------+
+|Coca Cola|    1253|  6.0|      6 pack|Fizzy and tastes ...|
+|Coca Cola|    1254| 10.0|     12 pack|Fizzy and tastes ...|
+|Coca Cola|    1255| 18.0|     18 pack|Fizzy and tastes ...|
+|Coca Cola|    1255| 16.0|     18 pack|Fizzy and tastes ...|
+|Coca Cola|    1254| 14.0|     12 pack|Fizzy and tastes ...|
+|Coca Cola|    1256| 99.0|300 can case|Fizzy and tastes ...|
+|   Sprite|   19283|  6.0|      6 pack|Not as good as Co...|
+|   Sprite|   19284| 10.0|     12 pack|Not as good as Co...|
+|   Sprite|   19285| 12.0|     18 pack|Not as good as Co...|
+|   Sprite|   19286| 99.0|300 can case|Not as good as Co...|
++---------+--------+-----+------------+--------------------+
+
+root
+ |-- product: string (nullable = true)
+ |-- group id: integer (nullable = true)
+ |-- price: double (nullable = true)
+ |-- size: string (nullable = true)
+ |-- description: string (nullable = true)
+
++------------+--------+------------+
+|        size|group id|averagePrice|
++------------+--------+------------+
+|300 can case|    1256|        99.0|
+|     12 pack|    1254|        12.0|
+|      6 pack|    1253|         6.0|
+|     18 pack|    1255|        17.0|
++------------+--------+------------+
+
+root
+ |-- size: string (nullable = true)
+ |-- group id: integer (nullable = true)
+ |-- averagePrice: double (nullable = true)
+
++------------+--------+------------+----------+
+|        size|group id|averagePrice|readableId|
++------------+--------+------------+----------+
+|300 can case|    1256|        99.0|      1256|
+|     18 pack|    1255|        17.0|      1255|
+|     12 pack|    1254|        12.0|      1254|
+|      6 pack|    1253|         6.0|      1253|
++------------+--------+------------+----------+
+
+root
+ |-- size: string (nullable = true)
+ |-- group id: integer (nullable = true)
+ |-- averagePrice: double (nullable = true)
+ |-- readableId: string (nullable = true)
+
+== Parsed Logical Plan ==
+'Sort ['averagePrice DESC NULLS LAST], true
++- AnalysisBarrier
+      +- Project [size#13, group id#11, averagePrice#49, UDF:readableId(group id#11) AS readableId#73]
+         +- Aggregate [size#13, group id#11], [size#13, group id#11, avg(price#12) AS averagePrice#49]
+            +- TypedFilter com.alireza.spark.App2$$Lambda$19/1569980193@538905d2, interface org.apache.spark.sql.Row, [StructField(product,StringType,true), StructField(group id,IntegerType,true), StructField(price,DoubleType,true), StructField(size,StringType,true), StructField(description,StringType,true)], createexternalrow(product#10.toString, group id#11, price#12, size#13.toString, description#14.toString, StructField(product,StringType,true), StructField(group id,IntegerType,true), StructField(price,DoubleType,true), StructField(size,StringType,true), StructField(description,StringType,true))
+               +- Relation[product#10,group id#11,price#12,size#13,description#14] csv
+
+== Analyzed Logical Plan ==
+size: string, group id: int, averagePrice: double, readableId: string
+Sort [averagePrice#49 DESC NULLS LAST], true
++- Project [size#13, group id#11, averagePrice#49, UDF:readableId(group id#11) AS readableId#73]
+   +- Aggregate [size#13, group id#11], [size#13, group id#11, avg(price#12) AS averagePrice#49]
+      +- TypedFilter com.alireza.spark.App2$$Lambda$19/1569980193@538905d2, interface org.apache.spark.sql.Row, [StructField(product,StringType,true), StructField(group id,IntegerType,true), StructField(price,DoubleType,true), StructField(size,StringType,true), StructField(description,StringType,true)], createexternalrow(product#10.toString, group id#11, price#12, size#13.toString, description#14.toString, StructField(product,StringType,true), StructField(group id,IntegerType,true), StructField(price,DoubleType,true), StructField(size,StringType,true), StructField(description,StringType,true))
+         +- Relation[product#10,group id#11,price#12,size#13,description#14] csv
+
+== Optimized Logical Plan ==
+Sort [averagePrice#49 DESC NULLS LAST], true
++- Aggregate [size#13, group id#11], [size#13, group id#11, avg(price#12) AS averagePrice#49, UDF:readableId(group id#11) AS readableId#73]
+   +- Project [group id#11, price#12, size#13]
+      +- TypedFilter com.alireza.spark.App2$$Lambda$19/1569980193@538905d2, interface org.apache.spark.sql.Row, [StructField(product,StringType,true), StructField(group id,IntegerType,true), StructField(price,DoubleType,true), StructField(size,StringType,true), StructField(description,StringType,true)], createexternalrow(product#10.toString, group id#11, price#12, size#13.toString, description#14.toString, StructField(product,StringType,true), StructField(group id,IntegerType,true), StructField(price,DoubleType,true), StructField(size,StringType,true), StructField(description,StringType,true))
+         +- Relation[product#10,group id#11,price#12,size#13,description#14] csv
+
+== Physical Plan ==
+*(3) Sort [averagePrice#49 DESC NULLS LAST], true, 0
++- Exchange rangepartitioning(averagePrice#49 DESC NULLS LAST, 200)
+   +- *(2) HashAggregate(keys=[size#13, group id#11], functions=[avg(price#12)], output=[size#13, group id#11, averagePrice#49, readableId#73])
+      +- Exchange hashpartitioning(size#13, group id#11, 200)
+         +- *(1) HashAggregate(keys=[size#13, group id#11], functions=[partial_avg(price#12)], output=[size#13, group id#11, sum#65, count#66L])
+            +- *(1) Project [group id#11, price#12, size#13]
+               +- *(1) Filter com.alireza.spark.App2$$Lambda$19/1569980193@538905d2.call
+                  +- *(1) FileScan csv [product#10,group id#11,price#12,size#13,description#14] Batched: false, Format: CSV, Location: InMemoryFileIndex[file:/home/alireza/spark-sql-example/src/main/java/com/alireza/spark/dataex.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<product:string,group id:int,price:double,size:string,description:string>
+
