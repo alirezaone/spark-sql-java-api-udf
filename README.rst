@@ -13,7 +13,7 @@ Here's a view of the new ``agg`` Dataset:
 
 .. image:: agg-schema.png
 
-Top few lines of the logical plan trace for ``ordered.explain(true)`` come as:
+Top few lines of the logical plan trace for ``ordered.explain(true)`` are as:
 
 ::
 
