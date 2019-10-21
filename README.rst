@@ -9,5 +9,6 @@ The ``SparkSession`` here operates on an aggregated Dataset and calls a user-def
 - A UDF method is included ``(spark.udf())`` that instantiates ``api.java.UDF1`` to set a ``readableId`` of ``StringType`` for each ``Integer`` entry ID.
 - The final Dataset ``ordered`` builds upon ``agg,`` invokes ``sql.functions`` on it to transform its ID with the ``callUDF`` method, and later orders it by its average price column.
 
+Here's a view of the new ``agg`` Dataset:
 
-
+.. image:: agg-schema.png
