@@ -13,6 +13,11 @@ Here's a view of the new ``agg`` Dataset:
 
 .. image:: agg-schema.png
 
-Top few lines of the logs for ``ordered.explain(true)`` come as:
+Top few lines of the logical plan trace for ``ordered.explain(true)`` come as:
 
-
+::
+== Analyzed Logical Plan ==
+size: string, group id: int, averagePrice: double, readableId: string
+Sort [averagePrice#49 DESC NULLS LAST], true
++- Project [size#13, group id#11, averagePrice#49, UDF:readableId(group id#11) AS readableId#73]
+   +- Aggregate [size#13, group id#11], [size#13, group id#11, avg(cast(price#12 as bigint)) AS averagePrice#49]
