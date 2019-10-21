@@ -12,3 +12,7 @@ The ``SparkSession`` here operates on an aggregated Dataset and calls a user-def
 Here's a view of the new ``agg`` Dataset:
 
 .. image:: agg-schema.png
+
+Top few lines of the logs for ``ordered.explain(true)`` come as:
+
+
