@@ -20,7 +20,7 @@ The logical plan traces for ``ordered.explain(true)`` follow as:
     == Analyzed Logical Plan ==
         size: string, group id: int, averagePrice: double, readableId: string
         Sort [averagePrice#49 DESC NULLS LAST], true
-            +- Project [size#13, group id#11, averagePrice#49, UDF:readableId(group id#11) AS readableId#73]
-                +- Aggregate [size#13, group id#11], [size#13, group id#11, avg(cast(price#12 as bigint)) AS averagePrice#49]
+        +- Project [size#13, group id#11, averagePrice#49, UDF:readableId(group id#11) AS readableId#73]
+           +- Aggregate [size#13, group id#11], [size#13, group id#11, avg(cast(price#12 as bigint)) AS averagePrice#49]
                    +- TypedFilter com.alireza.spark.SparkCSVIngest$$Lambda$19/1722528506@73e399cc, interface org.apache.spark.sql.Row, [StructField(product,StringType,true), StructField(group id,IntegerType,true), StructField(price,IntegerType,true), StructField(size,StringType,true), StructField(description,StringType,true)], createexternalrow(product#10.toString, group id#11, price#12, size#13.toString, description#14.toString, StructField(product,StringType,true), StructField(group id,IntegerType,true), StructField(price,IntegerType,true), StructField(size,StringType,true), StructField(description,StringType,true))
                       +- Relation[product#10,group id#11,price#12,size#13,description#14] csv
