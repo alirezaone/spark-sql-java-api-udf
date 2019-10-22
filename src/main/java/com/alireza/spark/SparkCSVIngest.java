@@ -45,7 +45,7 @@ public class SparkCSVIngest extends SparkRunner {
         agg.printSchema();
 
         /* A User-defined function to tack readableID
-           ---------------------------------------*/
+           ----------------------------------------*/
         spark.udf().register("readableId", new UDF1<Integer, String>() {
             @Override
             public String call(Integer integer) throws Exception {
