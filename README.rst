@@ -7,7 +7,7 @@ The ``SparkSession`` here operates on an aggregated Dataset and calls a user-def
 - The raw Dataset ``(csv)`` is created by calling the ``read`` function of the ``SparkSession.``
 - The aggregated Dataset ``(agg)`` is built using the ``filter`` function on the ``csv`` as a typed ``FilterFunction<Row>.`` After a ``groupBy`` it invokes ``sql.functions`` API to add an average price.
 - A UDF method is included ``(spark.udf())`` that instantiates ``api.java.UDF1`` to set a ``readableId`` of ``StringType`` for each ``Integer`` entry ID.
-- The final Dataset ``ordered`` builds upon ``agg,`` invokes ``sql.functions`` on it to transform its ID with the ``callUDF`` method, and later orders it by its average price column.
+- The final Dataset ``ordered`` builds upon ``agg,`` invokes ``sql.functions`` to transform its ID with the ``callUDF`` method, and later orders it by its average price column.
 
 Here's a view of the new ``agg`` Dataset:
 
